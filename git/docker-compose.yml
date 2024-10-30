@@ -1,0 +1,19 @@
+# https://github.com/myoung34/docker-github-actions-runner/wiki/Usage#docker-compose
+version: "3.8"
+services:
+    github-runner:
+        image: myoung34/github-runner:latest
+        container_name: github-runner-${REPO_NAME}-${REPO_OWNER}
+        environment:
+          RUNNER_NAME_PREFIX: runner 
+          RUNNER_NAME_SUFFIX: ${REPO_OWNER} 
+          RUNNER_NAME: ${REPO_NAME} 
+          RUNNER_TOKEN: ${RUNNER_TOKEN} 
+          REPO_URL: ${REPO_URL}
+          CONFIGURED_ACTIONS_RUNNER_FILES_DIR: /runner/data
+          RUNNER_WORKDIR: /tmp/runner/work
+        restart: always
+        volumes:
+          - '/var/run/docker.sock:/var/run/docker.sock'
+          - '/runner/${REPO_NAME}/data:/runner/data'
+          - '/tmp/runner/${REPO_NAME}:/tmp/runner'
