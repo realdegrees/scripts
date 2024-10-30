@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 
-DOCKER_COMPOSE_FILE="docker-compose.yml"
+RUN_IN_BACKGROUND=false
+DOCKER_COMPOSE_FILE="./docker-compose.yml"
 
 show_help() {
   echo "Usage: runner.sh [OPTIONS] [REPO_URL]"
@@ -14,7 +15,7 @@ show_help() {
   echo "  -f    Path to the docker-compose file (default: ./docker-compose.yml)"
 }
 
-while getopts "hdf:" opt; then
+while getopts "hdf:" opt; do
   case ${opt} in
     h )
       show_help
@@ -69,6 +70,12 @@ export REPO_NAME
 export REPO_OWNER
 export CONTAINER_NAME
 export RUNNER_TOKEN
+
+# Check if the docker-compose file exists, if not, download it
+if [ ! -f "$DOCKER_COMPOSE_FILE" ]; then
+  echo "Docker-compose file not found at $DOCKER_COMPOSE_FILE. Downloading default file..."
+  DOCKER_COMPOSE_FILE=$(curl -s https://raw.githubusercontent.com/realdegrees/scripts/refs/heads/master/git/docker-compose.yml)
+fi
 
 # Start Docker container for the runner
 docker-compose -f "$DOCKER_COMPOSE_FILE" up -d
