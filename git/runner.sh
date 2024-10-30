@@ -1,16 +1,38 @@
 #!/bin/bash
 set -e
 
-if [[ "$1" == "-h" ]]; then
-  echo "Usage: runner.sh [REPO_URL]"
+DOCKER_COMPOSE_FILE="docker-compose.yml"
+
+show_help() {
+  echo "Usage: runner.sh [OPTIONS] [REPO_URL]"
   echo "Example: runner.sh https://github.com/owner/repo.git"
   echo "  Omitting the [REPO_URL] will print all running containers."
   echo ""
   echo "Options:"
   echo "  -h    Show this help message"
   echo "  -d    Run in background"
-  exit 0
-fi
+  echo "  -f    Path to the docker-compose file (default: ./docker-compose.yml)"
+}
+
+while getopts "hdf:" opt; then
+  case ${opt} in
+    h )
+      show_help
+      exit 0
+      ;;
+    d )
+      RUN_IN_BACKGROUND=true
+      ;;
+    f )
+      DOCKER_COMPOSE_FILE=$OPTARG
+      ;;
+    \? )
+      show_help
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
 
 if [ -z "$1" ]; then
   echo "Currently running GitHub runner containers:"
@@ -49,7 +71,7 @@ export CONTAINER_NAME
 export RUNNER_TOKEN
 
 # Start Docker container for the runner
-docker-compose -f ~/docker/github-runner/docker-compose.yml up -d
+docker-compose -f "$DOCKER_COMPOSE_FILE" up -d
 # Get the container ID and name
 CONTAINER_ID=$(docker ps -q -f "name=${CONTAINER_NAME}")
 
@@ -58,6 +80,6 @@ echo "Successfully started a new GitHub Runner"
 echo "ID: $CONTAINER_ID"
 echo "Name: $CONTAINER_NAME"
 
-if [[ "$*" != *"-d"* ]]; then
+if [ -z "$RUN_IN_BACKGROUND" ]; then
   docker logs -f $CONTAINER_NAME
 fi
