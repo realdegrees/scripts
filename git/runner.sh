@@ -2,8 +2,6 @@
 # Enable immediate exit if any command fails
 set -e
 
-DOCKER_COMPOSE_FILE="./docker-compose.yml"
-
 # Help function to display usage instructions and available options
 show_help() {
   echo "Usage: runner.sh [OPTIONS] [REPO_URL]"
