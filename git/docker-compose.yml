@@ -5,7 +5,7 @@ services:
         image: myoung34/github-runner:latest
         container_name: github-runner-${REPO_NAME}-${REPO_OWNER}
         environment:
-          RUNNER_NAME_PREFIX: runner 
+          RUNNER_NAME_PREFIX: github-runner 
           RUNNER_NAME_SUFFIX: ${REPO_OWNER} 
           RUNNER_NAME: ${REPO_NAME} 
           RUNNER_TOKEN: ${RUNNER_TOKEN} 

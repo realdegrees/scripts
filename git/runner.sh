@@ -108,7 +108,7 @@ if [ "$1" = "stop" ]; then
   done
 fi
 
-while getopts "hldf:t:" opt; do
+while getopts "hlvdf:t:" opt; do
   case ${opt} in
   h)
     show_help
